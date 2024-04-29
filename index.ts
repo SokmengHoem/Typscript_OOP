@@ -9,10 +9,10 @@ class Book {
 }
 
 class UserAccount {
-  protected borrowed_books: string[]= [];
-  constructor(public name : string){}
+  protected borrowed_books: string[] = [];
+  constructor(public name: string) {}
 
-  borrowBook(bookTitle:string, library:Library):string {
+  borrowBook(bookTitle: string, library: Library): string {
     const bookAvailability = library.borrowBook(bookTitle);
     if (bookAvailability) {
       this.borrowed_books.push(bookTitle);
@@ -20,10 +20,10 @@ class UserAccount {
     return bookAvailability;
   }
 
-  viewBorrowedBook():string[] {
+  viewBorrowedBook(): string[] {
     return this.borrowed_books;
   }
-};
+}
 //for student
 class Student extends UserAccount {
   constructor(name: string) {
@@ -31,13 +31,12 @@ class Student extends UserAccount {
   }
 
   borrowBook(bookTitle: string, library: Library): string {
-    if (this.borrowed_books.length >= 5){
+    if (this.borrowed_books.length >= 5) {
       return "Sorry, you can't borrow more than 5 books";
-    }else{
+    } else {
       return super.borrowBook(bookTitle, library);
     }
   }
-      
 }
 
 //for Admin
@@ -50,10 +49,6 @@ class Admin extends UserAccount {
   borrowBook(bookTitle: string, library: Library): string {
     return super.borrowBook(bookTitle, library);
   }
-
-  // returnBook(bookTitle: string, library: Library): string {
-  //   return library.returnBook(bookTitle);
-  // }
 }
 
 class Library {
@@ -64,21 +59,28 @@ class Library {
     this.books.push(book);
   }
   removeBook(title: string) {
-    this.books = this.books.filter((book) => book.title !== title && book.ISBN !== title);
+    title = title.toLowerCase();
+    this.books = this.books.filter(
+      (book) => book.title.toLowerCase() !== title && book.ISBN !== title
+    );
   }
   searchBook(titleOrISBN: string) {
     titleOrISBN = titleOrISBN.toLowerCase(); // Convert to lowercase
-    console.log(titleOrISBN); // Log the lowercase value
     const foundBooks = this.books.filter(
-      (book) => 
-        book.title.toLowerCase() === titleOrISBN ||  // Convert book title to lowercase for comparison
-        book.ISBN === titleOrISBN ||  
-        book.author.toLowerCase() === titleOrISBN ||  // Convert author name to lowercase for comparison
-        book.genre.toLowerCase() === titleOrISBN     // Convert genre to lowercase for comparison
+      (book) =>
+        book.title.toLowerCase() === titleOrISBN ||
+        book.ISBN === titleOrISBN ||
+        book.author.toLowerCase() === titleOrISBN ||
+        book.genre.toLowerCase() === titleOrISBN
     );
     return foundBooks.length > 0 ? foundBooks : "Not found";
   }
-  
+  displayAvailableBooks() {
+    const availableBooks = this.books.filter((book) => book.available);
+    console.log("Available Books:");
+    availableBooks.forEach((book) => console.log(book.title));
+  }
+
   printBooks(): void {
     let i = 1;
     this.books.forEach((book) => {
@@ -90,8 +92,10 @@ class Library {
     });
   }
 
-  borrowBook(title:string):string {
-    const foundBook = this.books.find((book) => book.title === title);
+  borrowBook(title: string): string {
+    const foundBook = this.books.find(
+      (book) => book.title.toLowerCase() === title.toLowerCase()
+    );
     if (foundBook && foundBook.available) {
       foundBook.available = false;
       return `You have successfully borrowed ${title}`;
@@ -99,9 +103,12 @@ class Library {
     return `Sorry, ${title} is not available`;
   }
 
-  returnBook(title:string):string {
-    const foundBook = this.books.find((book) => book.title === title);
-    if (foundBook &&!foundBook.available) {
+  returnBook(title: string): string {
+    title = title.toLowerCase();
+    const foundBook = this.books.find(
+      (book) => book.title.toLowerCase() === title
+    );
+    if (foundBook && !foundBook.available) {
       foundBook.available = true;
       return `You have successfully returned ${title}`;
     }
@@ -112,7 +119,7 @@ class Library {
 //add book
 let book1 = new Book("First Love", "Sok", "Love", "123");
 let book2 = new Book("Reactjs", "dara", "Code", "468");
-let book3 = new Book("Principles of Economics","Vireak","Economics","8888");
+let book3 = new Book("Principles of Economics", "Vireak", "Economics", "8888");
 let book4 = new Book("Clay tablets", "Jon", "history", "9999");
 let book5 = new Book("History of Angkor", "vichet", "history", "1100");
 let book6 = new Book("History of Wat Phnom", "Vuth", "history", "1111");
@@ -140,13 +147,13 @@ library.addBook(book6);
 
 //Borrow Book from admin and student
 
-let admin = new Admin("admin");
+let admin = new Admin("admin Ko");
 let student = new Student("Li Tang");
 //let student2 = new Student("student2");
 
 //console.log(admin.borrowBook("Reactjs", library));
 //more than for student
-// console.log(student.borrowBook("First Love", library));
+//console.log(student.borrowBook("first Love", library));
 // console.log(student.borrowBook("Reactjs", library));
 // console.log(student.borrowBook("Principles of Economics",library));
 // console.log(student.borrowBook("Clay tablets",library));
@@ -154,4 +161,4 @@ let student = new Student("Li Tang");
 // console.log(student.borrowBook("History of Wat Phnom", library));
 
 //for return book
-//console.log(library.returnBook("First Love"))
+// console.log(library.returnBook("first Love"))
